@@ -1,0 +1,29 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+.page-header {
+  background-image: linear-gradient(170deg, #2876c4, #d9ee50);
+}
+.main-content {
+  max-width: 90%;
+  font-size: 0.8rem;
+}
+
+audio {
+  width: 140px;
+}
+
+.footnotes {
+  list-style: none;
+  padding-left: 0;
+}
+
+.footnotes li {
+  font-size: 0.8em;
+}
+
+.footnotes a {
+  text-decoration: none;
+}

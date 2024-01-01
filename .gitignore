@@ -1,0 +1,7 @@
+app.py
+ckpt/*
+*/__pycache__/*
+__pycache__/*
+exp/*
+datasets/*
+wandb/*
