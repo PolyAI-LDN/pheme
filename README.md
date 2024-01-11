@@ -1,5 +1,5 @@
 # Pheme Model
-This repo contains recipes and models used for training Pheme TTS models. It is the official implementation for the paper: [Pheme: Efficient and Conversational Speech Generation](https://arxiv.org/pdf/2401.02839.pdf). Demo at [link](https://huggingface.co/spaces/PolyAI/pheme)
+This repo contains recipes and models used for training Pheme TTS models. It is the official implementation for the paper: [Pheme: Efficient and Conversational Speech Generation](https://arxiv.org/pdf/2401.02839.pdf). Demo is available [here](https://huggingface.co/spaces/PolyAI/pheme) while a selection of audio samples can be found [here](https://polyai-ldn.github.io/pheme/)
 
 Our Pheme TTS framework validates several hypotheses:
 1. We can train Transformer-based conversational TTS models with much fewer training data than e.g., VALL-E or SoundStorm (e.g., 10x fewer data).
