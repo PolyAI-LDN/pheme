@@ -94,15 +94,22 @@ The manifest should follow the format:
 }
 
 ```
-
+Create train/valid/test manifests
+```
+PYTHONPATH=. python utils/data_prep.py
+```
+Resample audio files to 16kHz
+```
+find LJSpeech-1.1/wavs/ -name "*.wav" | parallel ffmpeg -i {} -ar 16000 -ac 1 audios/{/}
+```
 The following command will create semantic and acoustic tokens based on the `audios` folder.
 
 ```
-python utils/get_tokens_speech_tokenizer.py \
+PYTHONPATH=. python utils/get_tokens_speech_tokenizer.py \
     --config_path ckpt/speechtokenizer/config.json \
     --ckpt_path ckpt/speechtokenizer/SpeechTokenizer.pt \
-    --encoding_input datasets/example/audios \
-    --encoding_output datasets/example/audios-speech-tokenizer
+    --encoding_input datasets/ljspeech-training-data/audios \
+    --encoding_output datasets/ljspeech-training-data/audios-speech-tokenizer
 ```
 
 ## T2S

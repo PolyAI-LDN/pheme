@@ -3,8 +3,7 @@
 Copyright PolyAI Limited.
 """
 import os
-from asyncio import as_completed
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from tqdm import tqdm
 
@@ -63,10 +62,10 @@ class BaseTokenizer:
             ]
             # Wait for all tasks to complete
             for future in as_completed(futures):
-                future.result()
+                res = future.result()
 
-            # Explicitly shut down the thread pool
-            executor.shutdown()
+        # Explicitly shut down the thread pool
+        executor.shutdown()
 
     def encode_file(
             self, folder_path: str, destination_folder: str, filename: str):

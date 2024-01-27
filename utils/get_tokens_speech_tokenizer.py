@@ -17,7 +17,7 @@ import pathlib
 
 from modules.speech_tokenizer import SpeechTokenizer
 
-MQTTS_ROOT_PATH = str(pathlib.Path(__file__).parent.resolve())
+PROJECT_ROOT = str(pathlib.Path(__file__).parent.parent.resolve())
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -25,25 +25,25 @@ if __name__ == "__main__":
         "--config_path",
         type=str,
         help="Path to the SpeechTokenizer config",
-        default=MQTTS_ROOT_PATH + "/ckpt/speechtokenizer/config.json",
+        default=PROJECT_ROOT + "/ckpt/speechtokenizer/config.json",
     )
     parser.add_argument(
         "--ckpt_path",
         type=str,
         help="Path to the SpeechTokenizer checkpoint",
-        default=MQTTS_ROOT_PATH + "/ckpt/speechtokenizer/SpeechTokenizer.pt",
+        default=PROJECT_ROOT + "/ckpt/speechtokenizer/SpeechTokenizer.pt",
     )
     parser.add_argument(
         "--encoding_input",
         type=str,
         help="Path to the input folder for encoding",
-        default=MQTTS_ROOT_PATH + "/datasets/giga-training-data/audios",
+        default=PROJECT_ROOT + "/datasets/example/audios",
     )
     parser.add_argument(
         "--encoding_output",
         type=str,
         help="Path where to save the encoded tokens",
-        default="/tmp/encoding_output",
+        default=PROJECT_ROOT + "/datasets/example/audios-speech-tokenizer"
     )
     parser.add_argument(
         "--start_percent",
@@ -64,6 +64,8 @@ if __name__ == "__main__":
         config_path=args.config_path,
         ckpt_path=args.ckpt_path,
     )
+    #tokenizer.encode_files_with_model_seq
+    # TODO: debug execution speed, utilize multi-gpus
     tokenizer.encode_files_with_model_concurrent(
         folder_path=args.encoding_input, destination_folder=args.encoding_output,
         start_percent=args.start_percent, end_percent=args.end_percent
