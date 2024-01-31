@@ -50,7 +50,8 @@ class BaseTokenizer:
         filenames = self.get_chunk(folder_path, start_percent, end_percent)
 
         # encoding files has no side effects
-        with ThreadPoolExecutor(max_workers=40) as executor:
+        n_workers = os.cpu_count()
+        with ThreadPoolExecutor(max_workers=n_workers) as executor:
             futures = [
                 executor.submit(
                     self.encode_file,
@@ -61,8 +62,10 @@ class BaseTokenizer:
                 for filename in filenames
             ]
             # Wait for all tasks to complete
-            for future in as_completed(futures):
-                res = future.result()
+            with tqdm(total=len(futures)) as pbar:
+                for future in as_completed(futures):
+                    res = future.result()
+                    pbar.update(n=1)
 
         # Explicitly shut down the thread pool
         executor.shutdown()

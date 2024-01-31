@@ -5,3 +5,4 @@ __pycache__/*
 exp/*
 datasets/*
 wandb/*
+venv/*

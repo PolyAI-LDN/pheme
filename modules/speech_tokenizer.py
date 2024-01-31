@@ -14,9 +14,8 @@ from modules.tokenizer import BaseTokenizer
 
 
 class SpeechTokenizer(BaseTokenizer):
-    def __init__(self, config_path: str, ckpt_path: str):
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
+    def __init__(self, config_path: str, ckpt_path: str, device: torch.device):
+        self.device = device
         self.model = ST.load_from_checkpoint(
             config_path, ckpt_path).to(self.device)
         self.model.eval()
