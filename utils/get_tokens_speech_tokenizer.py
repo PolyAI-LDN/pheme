@@ -102,8 +102,4 @@ if __name__ == "__main__":
     print("Parsed args")
     print(args)
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # tokenizer.encode_files_with_model_seq
-    # TODO: debug execution speed, utilize multi-gpus
-
     main(args)
