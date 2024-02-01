@@ -159,3 +159,5 @@ urllib3==2.1.0
 uvicorn==0.24.0.post1
 websockets==11.0.3
 yarl==1.9.3
+accelerate==0.26.1
+wandb==0.16.2

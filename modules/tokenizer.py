@@ -39,19 +39,15 @@ class BaseTokenizer:
 
     @measure_duration
     def encode_files_with_model_concurrent(
-        self, folder_path: str, destination_folder: str, start_percent: int,
-        end_percent: int,
+        self, filenames: list, folder_path: str, destination_folder: str,
+        n_threads: int = os.cpu_count()
     ):
         # Ensure destination folder exists
         if not os.path.exists(destination_folder):
             os.makedirs(destination_folder)
 
-        # Go through each file in the folder
-        filenames = self.get_chunk(folder_path, start_percent, end_percent)
-
         # encoding files has no side effects
-        n_workers = os.cpu_count()
-        with ThreadPoolExecutor(max_workers=n_workers) as executor:
+        with ThreadPoolExecutor(max_workers=n_threads) as executor:
             futures = [
                 executor.submit(
                     self.encode_file,
