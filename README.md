@@ -94,40 +94,58 @@ The manifest should follow the format:
 }
 
 ```
-
+Create train/valid/test manifests
+```
+PYTHONPATH=. python utils/data_prep.py
+```
+Resample audio files to 16kHz
+```
+find LJSpeech-1.1/wavs/ -name "*.wav" | parallel ffmpeg -i {} -ar 16000 -ac 1 audios/{/}
+```
 The following command will create semantic and acoustic tokens based on the `audios` folder.
 
 ```
-python utils/get_tokens_speech_tokenizer.py \
+PYTHONPATH=. python utils/get_tokens_speech_tokenizer.py \
     --config_path ckpt/speechtokenizer/config.json \
     --ckpt_path ckpt/speechtokenizer/SpeechTokenizer.pt \
-    --encoding_input datasets/example/audios \
-    --encoding_output datasets/example/audios-speech-tokenizer
+    --encoding_input datasets/ljspeech-training-data/audios \
+    --encoding_output datasets/ljspeech-training-data/audios-speech-tokenizer
 ```
 
 ## T2S
 
 ```
-python train_t2s.py --metapath datasets/example/train.json \
-  --val_metapath datasets/example/train.json \
-  --output_dir ~/experiments/t2s \
-  --model_size tiny --batch_size 16 \
+TRAIN_MANIFEST="./datasets/ljspeech-training-data/train.json"
+DEV_MANIFEST="./datasets/ljspeech-training-data/dev.json"
+OUT_DIR="./experiments/t2s-ljspeech"
+
+OUT_DIR="/home/taras/experiments/t2s-ljspeech"
+python train_t2s.py --metapath "${TRAIN_MANIFEST}" \
+  --val_metapath "${DEV_MANIFEST}" \
+  --output_dir "${OUT_DIR}" \
+  --model_size tiny --batch_size 64 \
   --nworkers 12 --warmup_steps 10000 \
-  --save_steps 500 --n_epochs 10
+  --save_steps 500 --n_epochs 100 \
+  --learning_rate 1e-3
 ```
 
 ## A2S
 
 ```
-python train_s2a.py --saving_path exp/a2s --sampledir exp/a2s --vocoder_type SPEECHTOKENIZER \
-  --n_codes 1024 --n_cluster_groups 7 --metapath datasets/example/train.json \
-  --val_metapath datasets/example/train.json \
-  --warmup_step 10000 --nworkers 12 --first_n_lvls 7 \
-  --batch_size 1 --ffd_size 512 --hidden_size 512 --enc_nlayers 1 --nheads 8 \
-  --depthwise_conv_kernel_size 5 \
-  --val_check_interval 1 --sample_rate 16000 --lr 5e-4 \
-  --check_val_every_n_epoch 1 --n_semantic_codes 1024 \
-  --distributed
+TRAIN_MANIFEST="./datasets/ljspeech-training-data/train.json"
+DEV_MANIFEST="./datasets/ljspeech-training-data/dev.json"
+OUT_DIR="./experiments/s2a-ljspeech"
+
+python train_s2a.py --saving_path "${OUT_DIR}" --sampledir "${OUT_DIR}" --vocoder_type SPEECHTOKENIZER \
+ --n_codes 1024 --n_cluster_groups 7 --metapath "${TRAIN_MANIFEST}" \
+ --val_metapath "${DEV_MANIFEST}" \
+ --warmup_step 10000 --nworkers 12 --first_n_lvls 7 \
+ --batch_size 200 --ffd_size 1024 --hidden_size 768 --enc_nlayers 3 --dec_nlayers 6 --nheads 8 \
+ --depthwise_conv_kernel_size 5 \
+ --val_check_interval 60 --sample_rate 16000 --lr 5e-4 \
+ --check_val_every_n_epoch 1 --n_semantic_codes 1024 \
+ --distributed
+
 ```
 
 ## Speed test with TensoRT-LLM:

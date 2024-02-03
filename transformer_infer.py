@@ -46,7 +46,7 @@ def parse_arguments():
     )
     parser.add_argument("--t2s_path", type=str, default="ckpt/t2s/")
     parser.add_argument(
-        "--a2s_path", type=str, default="ckpt/s2a/s2a.ckpt")
+        "--s2a_path", type=str, default="ckpt/s2a/s2a.ckpt")
 
     parser.add_argument("--target_sample_rate", type=int, default=16_000)
 
@@ -74,7 +74,7 @@ class PhemeClient():
         self.t2s.eval()
 
         # S2A model
-        self.s2a = Pheme.load_from_checkpoint(args.a2s_path)
+        self.s2a = Pheme.load_from_checkpoint(args.s2a_path)
         self.s2a.to(device=device)
         self.s2a.eval()
 

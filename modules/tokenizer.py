@@ -3,8 +3,7 @@
 Copyright PolyAI Limited.
 """
 import os
-from asyncio import as_completed
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from tqdm import tqdm
 
@@ -40,18 +39,15 @@ class BaseTokenizer:
 
     @measure_duration
     def encode_files_with_model_concurrent(
-        self, folder_path: str, destination_folder: str, start_percent: int,
-        end_percent: int,
+        self, filenames: list, folder_path: str, destination_folder: str,
+        n_threads: int = os.cpu_count()
     ):
         # Ensure destination folder exists
         if not os.path.exists(destination_folder):
             os.makedirs(destination_folder)
 
-        # Go through each file in the folder
-        filenames = self.get_chunk(folder_path, start_percent, end_percent)
-
         # encoding files has no side effects
-        with ThreadPoolExecutor(max_workers=40) as executor:
+        with ThreadPoolExecutor(max_workers=n_threads) as executor:
             futures = [
                 executor.submit(
                     self.encode_file,
@@ -62,11 +58,13 @@ class BaseTokenizer:
                 for filename in filenames
             ]
             # Wait for all tasks to complete
-            for future in as_completed(futures):
-                future.result()
+            with tqdm(total=len(futures)) as pbar:
+                for future in as_completed(futures):
+                    res = future.result()
+                    pbar.update(n=1)
 
-            # Explicitly shut down the thread pool
-            executor.shutdown()
+        # Explicitly shut down the thread pool
+        executor.shutdown()
 
     def encode_file(
             self, folder_path: str, destination_folder: str, filename: str):
