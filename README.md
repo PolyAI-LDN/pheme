@@ -123,9 +123,10 @@ OUT_DIR="/home/taras/experiments/t2s-ljspeech"
 python train_t2s.py --metapath "${TRAIN_MANIFEST}" \
   --val_metapath "${DEV_MANIFEST}" \
   --output_dir "${OUT_DIR}" \
-  --model_size tiny --batch_size 16 \
+  --model_size tiny --batch_size 64 \
   --nworkers 12 --warmup_steps 10000 \
-  --save_steps 500 --n_epochs 50
+  --save_steps 500 --n_epochs 100 \
+  --learning_rate 1e-3
 ```
 
 ## A2S
