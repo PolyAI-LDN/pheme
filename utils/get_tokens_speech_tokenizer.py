@@ -52,13 +52,6 @@ def tokenize(filenames, device, args):
     tokenizer = SpeechTokenizer(
         config_path=args.config_path, ckpt_path=args.ckpt_path, device=device
     )
-    # an attempt to leverage multi-threading for each process.
-    # though perfomance is not better than with single-thread execution.
-    #tokenizer.encode_files_with_model_concurrent(
-    #        filenames,
-    #        folder_path=args.encoding_input,
-    #        destination_folder=args.encoding_output,
-    #        n_threads=8)
     for filename in tqdm(filenames):
         tokenizer.encode_file(
             folder_path=args.encoding_input,
@@ -93,16 +86,6 @@ if __name__ == "__main__":
         type=str,
         help="Path where to save the encoded tokens",
         default=PROJECT_ROOT + "/datasets/example/audios-speech-tokenizer",
-    )
-    parser.add_argument(
-        "--start_percent",
-        type=int,
-        default=0,
-    )
-    parser.add_argument(
-        "--end_percent",
-        type=int,
-        default=100,
     )
 
     args = parser.parse_args()
