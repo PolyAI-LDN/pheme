@@ -7,14 +7,14 @@ from pathlib import Path
 from transformer_infer import PhemeClient
 
 def generate_audio(text, voice, temperature, top_k, max_new_tokens):
-    args = parse_arguments()
-    client = PhemeClient(args)
+    start_time = time.time()  # 開始時間を記録
     audio_array = client.infer(text, voice=voice, temperature=temperature, top_k=top_k, max_new_tokens=max_new_tokens)
     
     # NumPy 配列をオーディオファイルに変換
     with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_file:
         sf.write(temp_file.name, audio_array, args.target_sample_rate)
-        return temp_file.name
+    
+    return temp_file.name
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
@@ -26,8 +26,6 @@ def parse_arguments():
     parser.add_argument("--s2a_path", type=str, default="ckpt/s2a/s2a.ckpt")
     parser.add_argument("--target_sample_rate", type=int, default=16_000)
     return parser.parse_args()
-
-voice_list = ["male_voice", "female_voice"]  # 利用可能な声のリストに置き換えてください
 
 iface = gr.Interface(
     fn=generate_audio,
@@ -42,5 +40,10 @@ iface = gr.Interface(
     title="Pheme TTS Demo",
     description="Enter text and select a voice to generate speech.",
 )
+
+voice_list = ["male_voice"]  # 利用可能な声のリストに置き換えてください
+
+args = parse_arguments()
+client = PhemeClient(args)
 
 iface.launch(share=True)
