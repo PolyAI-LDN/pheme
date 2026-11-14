@@ -51,7 +51,7 @@ class SingleRandomBucketSampler(data.Sampler):
             batch.append(idx)
             sum_len += self.length[idx]
             max_len = max(self.length[idx], max_len)
-            if max_len * len(batch) > self.batch_size:
+            if max_len * len(batch) > self.batch_size and len(batch) > 1:
                 batches.append(batch[:-1])
                 batch, sum_len, max_len = [batch[-1]], self.length[idx], self.length[idx]  # noqa
         if len(batch) > 0 and not self.drop_last:
@@ -96,7 +96,7 @@ class DistributedRandomBucketSampler(data.Sampler):
             batch.append(idx)
             sum_len += self.length[idx]
             max_len = max(self.length[idx], max_len)
-            if max_len * len(batch) > self.batch_size:
+            if max_len * len(batch) > self.batch_size and len(batch) > 1:
                 batches.append(batch[:-1])
                 batch, sum_len, max_len = [batch[-1]], self.length[idx], self.length[idx]  # noqa
         # Subsample
