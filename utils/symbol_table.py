@@ -254,14 +254,9 @@ class SymbolTable(Generic[Symbol]):
         return len(self._id2sym)
 
     def __eq__(self, other: 'SymbolTable') -> bool:
-        if len(self) != len(other):
-            return False
-
-        for s in self.symbols:
-            if self[s] != other[s]:
-                return False
-
-        return True
+        if not isinstance(other, SymbolTable):
+            return NotImplemented
+        return self._sym2id == other._sym2id
 
     @property
     def ids(self) -> List[int]:
