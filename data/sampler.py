@@ -99,11 +99,20 @@ class DistributedRandomBucketSampler(data.Sampler):
             if max_len * len(batch) > self.batch_size:
                 batches.append(batch[:-1])
                 batch, sum_len, max_len = [batch[-1]], self.length[idx], self.length[idx]  # noqa
-        # Subsample
-        num_samples = math.ceil(
-            (len(batches) - self.num_replicas) / self.num_replicas)
+        if batch and not self.drop_last:
+            batches.append(batch)
+
+        # Give every replica the same number of batches. When keeping the
+        # final batch, pad by repeating batches rather than dropping samples.
+        if self.drop_last:
+            num_samples = len(batches) // self.num_replicas
+        else:
+            num_samples = math.ceil(len(batches) / self.num_replicas)
         total_size = num_samples * self.num_replicas
-        batches = batches[:total_size]
+        if batches and not self.drop_last:
+            batches = (batches * math.ceil(total_size / len(batches)))[:total_size]
+        else:
+            batches = batches[:total_size]
         batches = batches[self.rank*num_samples: (self.rank+1)*num_samples]
         assert len(batches) == num_samples
 
