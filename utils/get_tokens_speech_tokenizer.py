@@ -33,13 +33,13 @@ logging.basicConfig(level=logging.DEBUG)
 @measure_duration
 def main(args):
     n_gpus = torch.cuda.device_count()
-    n_workers = n_gpus * 4
+    n_workers = max(1, n_gpus * 4)
     filenames = os.listdir(args.encoding_input)
     chunk_size = (len(filenames) + n_workers - 1) // n_workers
     futures = []
     with ProcessPoolExecutor() as executor:
         for idx in range(n_workers):
-            device = torch.device(f"cuda:{idx%n_gpus}")
+            device = torch.device(f"cuda:{idx%n_gpus}" if n_gpus else "cpu")
             _filenames = filenames[idx * chunk_size : (idx + 1) * chunk_size]
             futures.append(executor.submit(tokenize, _filenames, device, args))
 
