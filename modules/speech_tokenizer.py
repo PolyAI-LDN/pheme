@@ -78,8 +78,5 @@ class SpeechTokenizer(BaseTokenizer):
 
     @staticmethod
     def _create_subfolders(destination_folder: str):
-        if not os.path.exists(destination_folder + "/acoustic"):
-            os.makedirs(destination_folder + "/acoustic")
-
-        if not os.path.exists(destination_folder + "/semantic"):
-            os.makedirs(destination_folder + "/semantic")
+        os.makedirs(os.path.join(destination_folder, "acoustic"), exist_ok=True)
+        os.makedirs(os.path.join(destination_folder, "semantic"), exist_ok=True)
