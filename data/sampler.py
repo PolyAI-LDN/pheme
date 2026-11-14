@@ -84,11 +84,12 @@ class DistributedRandomBucketSampler(data.Sampler):
 
     def __iter__(self):
         # Deterministic shuffling
-        random.Random(self.epoch + self.seed).shuffle(self.indices)
-        for i, x in enumerate(self.indices):
+        buckets = [bucket.copy() for bucket in self.indices]
+        random.Random(self.epoch + self.seed).shuffle(buckets)
+        for i, x in enumerate(buckets):
             seed = self.epoch + self.seed + i * 5
             random.Random(seed).shuffle(x)
-        indices = [i for x in self.indices for i in x]
+        indices = [i for x in buckets for i in x]
 
         # Batching
         batches, batch, sum_len, max_len = [], [], 0, 0
