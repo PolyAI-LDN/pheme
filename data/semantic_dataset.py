@@ -168,7 +168,10 @@ class ConcatenateSemanticDataset(Dataset):
                     continue
                 text = value["text"]
                 phoneme = value["phoneme"]
-                npy_path = f"{dataset_path}/audios-speech-tokenizer/semantic/{key.split('.wav')[0]}.npy"  # noqa
+                npy_path = str(
+                    dataset_path / "audios-speech-tokenizer" / "semantic"
+                    / Path(key).with_suffix(".npy")
+                )
                 datapoint = {
                     "text": text,
                     "semantic_path": npy_path,

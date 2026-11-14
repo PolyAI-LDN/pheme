@@ -116,7 +116,7 @@ class QuantizeDataset(data.Dataset):
             semantic_tokens,[[0,0], [1, 0]], constant_values=c.SPKR_1)
 
         if "name_2" in metadata:
-            wav, _ = sf.read(dataname.split(".")[0] + "_1.wav")
+            wav, _ = sf.read(os.path.splitext(dataname)[0] + "_1.wav")
         else:
             wav, _ = sf.read(dataname)
         audio = normalize(wav) * 0.95
@@ -129,7 +129,7 @@ class QuantizeDataset(data.Dataset):
 
         # Speaker 2 
         if "text_2" in metadata:
-            _name = _name.split(".wav")[0] + "_2.wav"
+            _name = os.path.splitext(_name)[0] + "_2.wav"
             acoustic_tokens_2 = self.load_quantization(_name)
             acoustic_tokens_2 = np.pad(
                 acoustic_tokens_2, [[1, 0],[0,0]], constant_values=c.SPKR_2)
@@ -139,7 +139,7 @@ class QuantizeDataset(data.Dataset):
             semantic_tokens_2 = np.pad(
                 semantic_tokens_2,[[0,0], [1, 0]], constant_values=c.SPKR_2)
             
-            wav, _ = sf.read(dataname.split(".wav")[0] + "_2.wav")
+            wav, _ = sf.read(os.path.splitext(dataname)[0] + "_2.wav")
             audio = normalize(wav) * 0.95
             speaker_embedding_2 = self.spkr_embedding(
                 {"waveform": torch.FloatTensor(audio).unsqueeze(0), 
